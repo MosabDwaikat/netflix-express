@@ -32,11 +32,14 @@ const sliders = require("./shows/Sliders")(db);
 const register = require("./auth/register")(db, auth);
 const validateEmail = require("./auth/validateEmail")(auth);
 const login = require("./auth/login")(auth);
+const logout = require("./auth/logout")(auth);
+
 app.use("/shows", shows);
 app.use("/sliders", sliders);
 app.use("/register", register);
 app.use("/auth/validateEmail", validateEmail);
 app.use("/auth/Login", login);
+app.use("/auth/logout", logout);
 
 app.get("/", async (req, res) => {
   try {
