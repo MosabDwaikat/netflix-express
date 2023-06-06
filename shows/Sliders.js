@@ -5,51 +5,34 @@ module.exports = (db) => {
   router.get("/", async (req, res) => {
     try {
       const sliders = [];
+      const myList = { title: "My List", content: [] };
+      const uid = req.user.uid;
 
-      // First Slider
-      const firstSliderRef = db.collection("show").where("id", ">", 0);
-      const firstSliderSnapshot = await firstSliderRef.get();
-      const firstSliderData = firstSliderSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      const firstSlider = {
-        title: "First Slider",
-        content: firstSliderData,
-      };
-      sliders.push(firstSlider);
+      // 1 - Query the user to get the shows in myList
+      const userDoc = await db.collection("users").doc(uid).get();
+      const myListShows = userDoc.data().myList;
+      const allShows = await db.collection("show").get();
+      const shows = allShows.docs.map((doc) => doc.data());
 
-      // Second Slider
-      const secondSliderRef = db.collection("show").where("id", ">", 0);
-      const secondSliderSnapshot = await secondSliderRef.get();
-      const secondSliderData = secondSliderSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
+      const showData = shows.filter((e) => {
+        return myListShows.includes(e.id);
       });
-      const secondSlider = {
-        title: "Second Slider",
-        content: secondSliderData,
-      };
-      sliders.push(secondSlider);
+      myList.content = showData;
+      sliders.push(myList);
 
-      // Third Slider
-      const thirdSliderRef = db.collection("show").where("id", ">", 0);
-      const thirdSliderSnapshot = await thirdSliderRef.get();
-      const thirdSliderData = thirdSliderSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
-      const thirdSlider = {
-        title: "Third Slider",
-        content: thirdSliderData,
-      };
-      sliders.push(thirdSlider);
+      const slidersDoc = await db.collection("sliders").get();
+      const slidersInfo = slidersDoc.docs.map((doc) => doc.data());
+
+      console.log(slidersInfo);
+
+      for (let i = 0; i < slidersInfo.length; i++) {
+        const slider = slidersInfo[i];
+        const content = shows.filter((e) => {
+          return slider.content.includes(e.id);
+        });
+
+        sliders.push({ title: slider.title, content: content });
+      }
 
       res.status(200).json(sliders);
     } catch (error) {

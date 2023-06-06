@@ -22,7 +22,7 @@ module.exports = (db) => {
     }
   };
 
-  router.all("/:id", middleware);
+  // router.all("/:id", middleware);
 
   return router;
 };

@@ -25,39 +25,32 @@ const firebaseConfig = {
 initializeApp(firebaseConfig);
 const { getAuth } = require("@firebase/auth");
 const auth = getAuth();
-
 //***************************************** */
+
+const verifyTokenMiddleware = require("./auth/verifyToken")(admin);
+const verifyToken = require("./auth/verify")(admin);
+const hero = require("./shows/hero")(db);
 const shows = require("./shows/shows")(db);
 const sliders = require("./shows/Sliders")(db);
 const register = require("./auth/register")(db, auth);
 const validateEmail = require("./auth/validateEmail")(auth);
 const login = require("./auth/login")(auth);
 const logout = require("./auth/logout")(auth);
+const list = require("./user/list")(db);
+const likes = require("./user/likes")(db);
 
-app.use("/shows", shows);
-app.use("/sliders", sliders);
+//protected
+app.use("/hero", verifyTokenMiddleware, hero);
+app.use("/shows", verifyTokenMiddleware, shows);
+app.use("/sliders", verifyTokenMiddleware, sliders);
+app.use("/list", verifyTokenMiddleware, list);
+app.use("/likes", verifyTokenMiddleware, likes);
+//other
 app.use("/register", register);
 app.use("/auth/validateEmail", validateEmail);
+app.use("/auth/verifyToken", verifyToken);
 app.use("/auth/Login", login);
 app.use("/auth/logout", logout);
-
-app.get("/", async (req, res) => {
-  try {
-    const showRef = db.collection("show");
-    const querySnapshot = await showRef.get();
-    const docs = querySnapshot.docs;
-    const randomIndex = Math.floor(Math.random() * docs.length);
-    const randomDoc = docs[randomIndex];
-    const randomShow = {
-      id: randomDoc.id,
-      ...randomDoc.data(),
-    };
-    res.status(200).json(randomShow);
-  } catch (error) {
-    console.error("Error retrieving Firestore data:", error);
-    res.status(500).send("Internal Server Error");
-  }
-});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
