@@ -6,7 +6,7 @@ module.exports = (db, auth) => {
   router.use(express.json());
 
   router.post("/", async (req, res) => {
-    const { firstName, lastName, password, email } = req.body;
+    const { password, email } = req.body;
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -19,8 +19,6 @@ module.exports = (db, auth) => {
       // Create a new document in Firestore with the user's UID as the document ID
       const userDocRef = db.collection("users").doc(user.uid);
       await userDocRef.set({
-        firstName,
-        lastName,
         email,
         myList: [],
       });

@@ -9,9 +9,12 @@ module.exports = (db) => {
       const docs = querySnapshot.docs;
       const randomIndex = Math.floor(Math.random() * docs.length);
       const randomDoc = docs[randomIndex];
+      const randomShowData = randomDoc.data();
       const randomShow = {
         id: randomDoc.id,
-        ...randomDoc.data(),
+        img: randomShowData.img,
+        info: randomShowData.info,
+        tags: randomShowData.tags,
       };
       res.status(200).json(randomShow);
     } catch (error) {

@@ -45,13 +45,17 @@ app.use("/auth/logout", logout);
 //protected
 const hero = require("./shows/hero")(db);
 const shows = require("./shows/shows")(db);
+const showByID = require("./shows/ShowByID")(db);
 const sliders = require("./shows/Sliders")(db);
+const search = require("./shows/search")(db);
 const list = require("./user/list")(db);
 const likes = require("./user/likes")(db);
 //protected
 app.use("/hero", verifyTokenMiddleware, hero);
 app.use("/shows", verifyTokenMiddleware, shows);
+app.use("/showByID", verifyTokenMiddleware, showByID);
 app.use("/sliders", verifyTokenMiddleware, sliders);
+app.use("/search", verifyTokenMiddleware, search);
 app.use("/list", verifyTokenMiddleware, list);
 app.use("/likes", verifyTokenMiddleware, likes);
 
