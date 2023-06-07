@@ -28,29 +28,32 @@ const auth = getAuth();
 //***************************************** */
 
 const verifyTokenMiddleware = require("./auth/verifyToken")(admin);
+
+//account
+const register = require("./auth/register")(db, auth);
+const validateEmail = require("./auth/validateEmail")(auth);
 const verifyToken = require("./auth/verify")(admin);
+const login = require("./auth/login")(auth);
+const logout = require("./auth/logout")(auth);
+//account
+app.use("/register", register);
+app.use("/auth/validateEmail", validateEmail);
+app.use("/auth/verifyToken", verifyToken);
+app.use("/auth/Login", login);
+app.use("/auth/logout", logout);
+
+//protected
 const hero = require("./shows/hero")(db);
 const shows = require("./shows/shows")(db);
 const sliders = require("./shows/Sliders")(db);
-const register = require("./auth/register")(db, auth);
-const validateEmail = require("./auth/validateEmail")(auth);
-const login = require("./auth/login")(auth);
-const logout = require("./auth/logout")(auth);
 const list = require("./user/list")(db);
 const likes = require("./user/likes")(db);
-
 //protected
 app.use("/hero", verifyTokenMiddleware, hero);
 app.use("/shows", verifyTokenMiddleware, shows);
 app.use("/sliders", verifyTokenMiddleware, sliders);
 app.use("/list", verifyTokenMiddleware, list);
 app.use("/likes", verifyTokenMiddleware, likes);
-//other
-app.use("/register", register);
-app.use("/auth/validateEmail", validateEmail);
-app.use("/auth/verifyToken", verifyToken);
-app.use("/auth/Login", login);
-app.use("/auth/logout", logout);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

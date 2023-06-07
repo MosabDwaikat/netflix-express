@@ -1,7 +1,7 @@
 const verifyToken = (admin) => (req, res, next) => {
   const authorizationHeader = req.headers.authorization;
   if (!authorizationHeader) {
-    return res.status(404).json({ message: "No token provided" });
+    return res.status(400).json({ message: "No token provided" });
   }
 
   if (!authorizationHeader.startsWith("Bearer ")) {
